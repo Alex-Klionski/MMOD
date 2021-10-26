@@ -189,9 +189,9 @@ def covariation(matrix, x_values, y_values):
 def correlation_coeff(matrix, x_values, y_values, amount=1000):
     gen = DiscreteSVGenerator(matrix, x_values, y_values)
     samples = np.array([next(gen) for _ in range(amount)])
-    d1 = np.var([x[0] for x in samples], ddof=1)
-    d2 = np.var([x[1] for x in samples], ddof=1)
-    return covariation(matrix, x_values, y_values) / np.sqrt(np.prod((d1, d2)))
+    x_samples = np.var([x_values[x[0]] for x in samples], ddof=1)
+    y_samples = np.var([y_values[y[1]] for y in samples], ddof=1)
+    return covariation(matrix, x_values, y_values) / np.sqrt(np.prod((x_samples, y_samples)))
 
 
 def calculate_empiric_and_theoretic(matrix, x, y, amount=1000):
