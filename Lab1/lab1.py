@@ -3,7 +3,6 @@ import seaborn as sn
 import matplotlib.pyplot as plt
 import scipy.stats as sta
 
-
 # Лабораторная работа №1
 # Клионский Алексей 853501
 
@@ -53,6 +52,20 @@ x_values = np.array([4., 5., 9.])
 y_values = np.array([2., 4., 6., 8.])
 
 
+def compute_chi_square_statistics(theoretical_probability_matrix: np.array,
+                                  emperical_probability_matrix: np.array, samples_amount: int = 1000):
+
+    return samples_amount * np.sum(
+        (emperical_probability_matrix - theoretical_probability_matrix) ** 2 / theoretical_probability_matrix)
+
+
+def chi_square_test(theoretical_probability_matrix: np.array, emperical_probability_matrix, samples_amount: int, confidence_level=0.05):
+    chi_square_statistics = compute_chi_square_statistics(theoretical_probability_matrix, emperical_probability_matrix, samples_amount)
+
+    p_value = 1 - sta.chi2.cdf(chi_square_statistics, theoretical_probability_matrix.size - 1)
+    return p_value, p_value > confidence_level
+
+
 def plot_theoretical_and_empirical_probability_matrices(theoretical, empirical):
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6), sharey='all')
     ax1.set_title('Теоретическая матрица распределения')
@@ -64,7 +77,9 @@ def plot_theoretical_and_empirical_probability_matrices(theoretical, empirical):
 
 empiric_matrix = empiric_probability_matrix(matrix, x_values, y_values)
 
-plot_theoretical_and_empirical_probability_matrices(matrix, empiric_matrix)
+print(chi_square_test(matrix, empiric_matrix, 1000))
+
+# plot_theoretical_and_empirical_probability_matrices(matrix, empiric_matrix)
 
 
 # Гистограммы
@@ -91,7 +106,7 @@ def plot_histograms(matrix, x_values, y_values, amount=1000):
     plt.show()
 
 
-plot_histograms(matrix, x_values, y_values)
+# plot_histograms(matrix, x_values, y_values)
 
 
 # Точечные и интервальные оценки математического ожидания
@@ -133,7 +148,7 @@ def interval_for_x_and_y(matrix, x_values, y_values, amount=1000):
     print('Доверительный интервал для оценки математического ожидания Y: ', interval_for_y)
 
 
-interval_for_x_and_y(matrix, x_values, y_values)
+# interval_for_x_and_y(matrix, x_values, y_values)
 
 
 # Точечные и интервальные оценки дисперсии
@@ -176,7 +191,7 @@ def interval_for_x_and_y_variance(matrix, x_values, y_values, amount=1000):
     print('Доверительный интервал для оценки дисперсии Y: ', dov_interval_for_y)
 
 
-interval_for_x_and_y_variance(matrix, x_values, y_values)
+# interval_for_x_and_y_variance(matrix, x_values, y_values)
 
 
 # Коэффициент корреляции
@@ -202,4 +217,4 @@ def calculate_empiric_and_theoretic(matrix, x, y, amount=1000):
     print('Эмпирический коэффициент корреляция = ', correlation_coeff(empirical_matrix, x_values, y_values))
 
 
-calculate_empiric_and_theoretic(matrix, x_values, y_values)
+# calculate_empiric_and_theoretic(matrix, x_values, y_values)
