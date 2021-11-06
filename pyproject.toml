@@ -6,6 +6,7 @@ authors = ["Alex-Klionski <leshka.klionski@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+black = "^21.10b0"
 
 [tool.poetry.dev-dependencies]
 
