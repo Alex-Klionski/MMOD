@@ -13,7 +13,7 @@ class Empirical:
         return [
             (len(reject_and_serve_array[reject_and_serve_array == i]) / len(reject_and_serve_array))
             for i in range(
-                1, self.system_mass_service.m + 1
+                1, self.system_mass_service.m + self.system_mass_service.n
             )
         ]
 
@@ -21,7 +21,7 @@ class Empirical:
     def get_reject(self):
         reject_array = np.array(self.system_mass_service.reject_list)
         return len(
-            reject_array[reject_array == self.system_mass_service.m + 1]
+            reject_array[reject_array == self.system_mass_service.m + self.system_mass_service.n]
         ) / len(reject_array)
 
     # Относительная пропускная способность

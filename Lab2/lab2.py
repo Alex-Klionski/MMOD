@@ -130,27 +130,16 @@ class Test:
         )
         plt.show()
 
-    def chi_test(self, p_theoretical, p_empirical):
-        stat, value = chisquare(p_empirical, p_theoretical)
-
-        if value >= 0.95:
-            print('Критерий хи-квадрат выполнен')
-        else:
-            print('Критерий хи-квадрат не выполнен')
-
 
 if __name__ == "__main__":
-    test1 = Test(n=2, m=10, l=10, ny=5, v=1, time=3000)
-    p_theoretical, p_empirical = test1.start_system()
-    test1.plot(p_theoretical, p_empirical)
-    test1.chi_test(p_theoretical, p_empirical)
+    # test1 = Test(n=2, m=10, l=10, ny=5, v=1, time=3000)
+    # p_theoretical, p_empirical = test1.start_system()
+    # test1.plot(p_theoretical, p_empirical)
 
     test2 = Test(n=4, m=13, l=6, ny=7, v=1, time=3000)
     p_theoretical2, p_empirical2 = test2.start_system()
     test2.plot(p_theoretical2, p_empirical2)
-    test2.chi_test(p_theoretical2, p_empirical2)
-
-    test3 = Test(n=1, m=15, l=30, ny=3, v=1, time=3000)
-    p_theoretical3, p_empirical3 = test3.start_system()
-    test3.plot(p_theoretical3, p_empirical3)
-    test3.chi_test(p_theoretical3, p_empirical3)
+    #
+    # test3 = Test(n=1, m=15, l=30, ny=3, v=1, time=3000)
+    # p_theoretical3, p_empirical3 = test3.start_system()
+    # test3.plot(p_theoretical3, p_empirical3)

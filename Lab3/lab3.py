@@ -1,7 +1,6 @@
 import simpy
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import chisquare
 
 # Лабораторная работа №3 (вариант 12)
 # Клионский Алексей 853501
@@ -12,17 +11,16 @@ from scipy.stats import chisquare
 при условиях: Х = 4 заявки/ч; to6c = 1 / (х = 0,5.2). 
 ВЫЯСНИТЬ, как эти характеристики изменяются, если увеличить число мест в очереди до m = 4. 
 '''
-
 from Lab3.empirical import Empirical
 from Lab3.theoretical import Theoretical
 
+
 class SystemMassService:
-    def __init__(self, env, n, m, ny, v, l):
+    def __init__(self, env, n, m, ny, l):
         self.n = n
         self.m = m
         self.env = env
         self.ny = ny
-        self.v = v
         self.l = l
         self.loader = simpy.Resource(env, n)
 
@@ -39,9 +37,6 @@ class SystemMassService:
             yield self.env.timeout(np.random.exponential(1 / self.l))
             self.env.process(iter(self))
 
-    def waiting(self):
-        yield self.env.timeout(np.random.exponential(1.0 / self.v))
-
     def serve(self):
         yield self.env.timeout(np.random.exponential(1.0 / self.ny))
 
@@ -55,34 +50,31 @@ def servicing(system: SystemMassService):
         system.queue_list_lens.append(queue_len)
         system.sum_list_queue_len_and_count_active_channels.append(queue_len + count_active_channels)
         if current_queue_len <= system.m:
+            system.reject_list.append(queue_len + count_active_channels)
             arrival_time = system.env.now
-            response = yield request | system.env.process(system.waiting())
+            yield request
             system.queue_times.append(system.env.now - arrival_time)
-            if request in response:
-                yield system.env.process(system.serve())
-                system.serve_list.append(current_queue_len + current_count_active_channels)
-            else:
-                system.reject_list.append(current_queue_len + current_count_active_channels)
+            yield system.env.process(system.serve())
+            system.serve_list.append(current_queue_len + current_count_active_channels)
             system.times_smo.append(system.env.now - arrival_time)
         else:
-            system.reject_list.append(system.n + system.m + 1)
+            system.reject_list.append(system.n + system.m)
             system.times_smo.append(0)
             system.queue_times.append(0)
 
 
 class Test:
-    def __init__(self, n, m, ny, v, l, time):
+    def __init__(self, n, m, ny, l, time):
         self.n = n
         self.m = m
         self.ny = ny
-        self.v = v
         self.l = l
         self.time = time
 
     def start_system(self):
         env = simpy.Environment()
         system_mass_service = SystemMassService(
-            env=env, n=self.n, m=self.m, ny=self.ny, v=self.v, l=self.l
+            env=env, n=self.n, m=self.m, ny=self.ny, l=self.l
         )
         env.process(system_mass_service.start(servicing))
         env.run(until=self.time)
@@ -125,14 +117,15 @@ class Test:
 
 
 if __name__ == "__main__":
-    # ny = 2
+    # tобсл = 1/ ny => ny = 1 / tобсл
+    ny = 2
     # При m = 3
-    # test1 = Test(n=1, m=3, l=4, ny=2, v=1, time=1000)
-    # p_theoretical, p_empirical = test1.start_system()
-    # test1.plot(p_theoretical, p_empirical)
+    test1 = Test(n=1, m=3, l=4, ny=2, time=1000)
+    p_theoretical, p_empirical = test1.start_system()
+    test1.plot(p_theoretical, p_empirical)
 
-    # При m =4
-    test2 = Test(n=1, m=4, l=4, ny=2, v=1, time=1000)
+    # При m = 4
+    test2 = Test(n=1, m=4, l=4, ny=2, time=1000)
     p_theoretical, p_empirical = test2.start_system()
     test2.plot(p_theoretical, p_empirical)
 
